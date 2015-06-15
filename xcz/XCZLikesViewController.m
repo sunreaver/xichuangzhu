@@ -169,6 +169,10 @@
     
     cell.textLabel.text = work.fullTitle;
     cell.detailTextLabel.text = [[NSString alloc] initWithFormat:@"[%@] %@", work.dynasty, work.author];
+    
+    [tableView setContentInset:UIEdgeInsetsZero];
+    [tableView setScrollIndicatorInsets:UIEdgeInsetsZero];
+    
     return cell;
 }
 

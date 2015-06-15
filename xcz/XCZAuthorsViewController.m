@@ -175,6 +175,10 @@
     }
 
     cell.textLabel.text = author.name;
+    
+    [tableView setContentInset:UIEdgeInsetsZero];
+    [tableView setScrollIndicatorInsets:UIEdgeInsetsZero];
+    
     return cell;
 }
 

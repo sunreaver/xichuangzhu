@@ -70,6 +70,9 @@
         [btnArrays addObject:unlikeButton];
     }
     
+    UIBarButtonItem *shareBtn = [self createShareButton];
+    [btnArrays addObject:shareBtn];
+    
     self.navigationItem.rightBarButtonItems = btnArrays;
 }
 
@@ -101,6 +104,16 @@
                                          iconSize:27.0f
                                         imageSize:CGSizeMake(27.0f, 27.0f)];
     return [[UIBarButtonItem alloc] initWithImage:unlikeIcon style:UIBarButtonItemStylePlain target:self action:@selector(unlikeWork:)];
+}
+
+// 创建ShareButton
+- (UIBarButtonItem *)createShareButton
+{
+    UIImage *shareIcon = [IonIcons imageWithIcon:icon_share
+                                        iconColor:self.view.tintColor
+                                         iconSize:27.0f
+                                        imageSize:CGSizeMake(27.0f, 27.0f)];
+    return [[UIBarButtonItem alloc] initWithImage:shareIcon style:UIBarButtonItemStylePlain target:self action:@selector(shareImage:)];
 }
 
 // 进入/退出全屏模式
@@ -249,10 +262,44 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"reloadLikesData" object:nil userInfo:nil];
 }
 
+-(IBAction)shareImage:(id)sender
+{
+    UIImage *image = [self snapshot:self.contentView];
+    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+//share
+#pragma mark - Private method
+- (UIImage *)snapshot:(UIView *)view
+{
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0);
+    [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
+- (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
+{
+    NSString *msg = nil ;
+    if(error != NULL){
+        msg = @"保存图片失败" ;
+    }else{
+        msg = @"保存图片成功" ;
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"保存图片结果提示"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"确定"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
 @end

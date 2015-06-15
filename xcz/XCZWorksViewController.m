@@ -111,7 +111,7 @@
 // 过滤结果
 - (void)filterContentForSearchText:(NSString*)searchText
 {
-    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"fullTitle contains[c] %@", searchText];
+    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"(fullTitle contains[cd] %@) OR (author contains[cd] %@)", searchText, searchText];
     self.searchResults = [self.works filteredArrayUsingPredicate:resultPredicate];
 }
 
@@ -148,6 +148,10 @@
     
     cell.textLabel.text = work.fullTitle;
     cell.detailTextLabel.text = [[NSString alloc] initWithFormat:@"[%@] %@", work.dynasty, work.author];
+    
+    [tableView setContentInset:UIEdgeInsetsZero];
+    [tableView setScrollIndicatorInsets:UIEdgeInsetsZero];
+    
     return cell;
 }
 
