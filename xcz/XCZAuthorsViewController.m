@@ -70,11 +70,11 @@
 
 // 以下3个message用于解决键盘位置占据了searchResultsTableView下方空间的bug
 // 参见：http://stackoverflow.com/questions/19069503/uisearchdisplaycontrollers-searchresultstableviews-contentsize-is-incorrect-b
-- (void)searchDisplayController:(UISearchDisplayController *)controller didHideSearchResultsTableView:(UITableView *)tableView {
+- (void)searchDisplayController:(UISearchController *)controller didHideSearchResultsTableView:(UITableView *)tableView {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
-- (void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView {
+- (void)searchDisplayController:(UISearchController *)controller willShowSearchResultsTableView:(UITableView *)tableView {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
 }
 
@@ -97,7 +97,7 @@
     self.searchResult = [self.authorsForSearch filteredArrayUsingPredicate:resultPredicate];
 }
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+- (BOOL)searchDisplayController:(UISearchController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
     [self filterContentForSearchText:searchString];
     return YES;

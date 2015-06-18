@@ -12,7 +12,6 @@
 #import "XCZAuthor.h"
 #import "XCZWorkDetailViewController.h"
 #import "XCZUtils.h"
-#import <AVOSCloud/AVOSCloud.h>
 
 @interface XCZAuthorDetailsViewController ()
 
@@ -67,7 +66,7 @@
 {
     [super viewWillAppear:animated];
     
-    [AVAnalytics beginLogPageView:[[NSString alloc] initWithFormat:@"author-%@", self.author.name ]];
+//    [AVAnalytics beginLogPageView:[[NSString alloc] initWithFormat:@"author-%@", self.author.name ]];
     
     // 姓名
     self.nameField.text = self.author.name;
@@ -93,14 +92,15 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [AVAnalytics endLogPageView:[[NSString alloc] initWithFormat:@"author-%@", self.author.name ]];
+//    [AVAnalytics endLogPageView:[[NSString alloc] initWithFormat:@"author-%@", self.author.name ]];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    self.navigationItem.title = self.author.name;
+//    self.navigationItem.title = self.author.name;
+    self.title = self.author.name;
     UIView *headerView = self.headerView;
     [self.tableView setTableHeaderView:headerView];
     

@@ -136,7 +136,7 @@
     self.searchResults = [self.works filteredArrayUsingPredicate:resultPredicate];
 }
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+- (BOOL)searchDisplayController:(UISearchController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
     [self filterContentForSearchText:searchString];
     return YES;

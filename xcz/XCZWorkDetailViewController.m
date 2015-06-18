@@ -12,13 +12,16 @@
 #import "IonIcons.h"
 #import "XCZLike.h"
 #import "XCZAuthorDetailsViewController.h"
-#import <AVOSCloud/AVOSCloud.h>
+#include<AssetsLibrary/AssetsLibrary.h>
 
-@interface XCZWorkDetailViewController ()
+typedef void (^SaveImageCompletion)(NSError *error);
+
+@interface XCZWorkDetailViewController ()<UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *authorTopConstraint;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIView *contentNoIntroView;
 @property (weak, nonatomic) IBOutlet UILabel *titleField;
 @property (weak, nonatomic) IBOutlet UILabel *authorField;
 @property (weak, nonatomic) IBOutlet UILabel *contentField;
@@ -45,6 +48,8 @@
     // 初始化navbar按钮
     bool showLike = ![XCZLike checkExist:self.work.id];
     [self initNavbarShowAuthor:self.showAuthorButton showLike:showLike];
+    
+    self.title = self.work.title;
 
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(toggleBars:)];
     [self.view addGestureRecognizer:singleTap];
@@ -76,10 +81,21 @@
     self.navigationItem.rightBarButtonItems = btnArrays;
 }
 
+//设置背景
+-(void)setBackGroundImage
+{
+    UIImage *img = [UIImage imageNamed:@"bg"];
+    self.view.layer.contents = (id)img.CGImage;
+    
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.frame.size.width, self.contentView.frame.size.height)];
+    [iv setImage:[img stretchableImageWithLeftCapWidth:img.size.width/2 topCapHeight:img.size.height/2]];
+    [self.contentView insertSubview:iv atIndex:0];
+}
+
 // 创建AuthorButton
 - (UIBarButtonItem *)createAuthorButton
 {
-    UIImage *authorIcon = [IonIcons imageWithIcon:icon_ios7_person_outline
+    UIImage *authorIcon = [IonIcons imageWithIcon:ion_person
                                         iconColor:self.view.tintColor
                                          iconSize:31.0f
                                         imageSize:CGSizeMake(31.0f, 31.0f)];
@@ -89,7 +105,7 @@
 // 创建LikeButton
 - (UIBarButtonItem *)createLikeButton
 {
-    UIImage *likeIcon = [IonIcons imageWithIcon:icon_ios7_star_outline
+    UIImage *likeIcon = [IonIcons imageWithIcon:ion_ios_star_outline
                                       iconColor:self.view.tintColor
                                        iconSize:27.0f
                                       imageSize:CGSizeMake(27.0f, 27.0f)];
@@ -99,8 +115,8 @@
 // 创建UnlikeButton
 - (UIBarButtonItem *)createUnlikeButton
 {
-    UIImage *unlikeIcon = [IonIcons imageWithIcon:icon_ios7_star
-                                        iconColor:self.view.tintColor
+    UIImage *unlikeIcon = [IonIcons imageWithIcon:ion_ios_star
+                                        iconColor:[UIColor colorWithRed:137.0/255.0 green:24.0/255.0 blue:27.0/255.0 alpha:1.0]
                                          iconSize:27.0f
                                         imageSize:CGSizeMake(27.0f, 27.0f)];
     return [[UIBarButtonItem alloc] initWithImage:unlikeIcon style:UIBarButtonItemStylePlain target:self action:@selector(unlikeWork:)];
@@ -109,7 +125,7 @@
 // 创建ShareButton
 - (UIBarButtonItem *)createShareButton
 {
-    UIImage *shareIcon = [IonIcons imageWithIcon:icon_share
+    UIImage *shareIcon = [IonIcons imageWithIcon:ion_image
                                         iconColor:self.view.tintColor
                                          iconSize:27.0f
                                         imageSize:CGSizeMake(27.0f, 27.0f)];
@@ -132,9 +148,9 @@
 
     // 全屏模式下，扩大title的顶部间距
     if (tabBarHidden) {
-        self.titleTopConstraint.constant = 40;
+        self.titleTopConstraint.constant = 10;
     } else {
-        self.titleTopConstraint.constant = 60;
+        self.titleTopConstraint.constant = 30;
     }
     
     [UIView animateWithDuration:0.4
@@ -178,10 +194,7 @@
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     */
      
-    [AVAnalytics beginLogPageView:[[NSString alloc] initWithFormat:@"work-%@/%@", self.work.author, self.work.title]];
-    
-    // 从其他页面跳转过来时，将navbar标题设置为空
-    self.navigationItem.title = @"";
+//    [AVAnalytics beginLogPageView:[[NSString alloc] initWithFormat:@"work-%@/%@", self.work.author, self.work.title]];
     
     XCZWork *work = self.work;
     
@@ -227,12 +240,12 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [AVAnalytics endLogPageView:[[NSString alloc] initWithFormat:@"work-%@/%@", self.work.author, self.work.title]];
+//    [AVAnalytics endLogPageView:[[NSString alloc] initWithFormat:@"work-%@/%@", self.work.author, self.work.title]];
 }
 
 - (IBAction)redirectToAuthor:(id)sender
 {
-    [self.navigationItem setTitle:@"返回"];
+//    [self.navigationItem setTitle:@"返回"];
     
     XCZAuthorDetailsViewController *authorDetailController = [[XCZAuthorDetailsViewController alloc] initWithAuthorId:self.work.authorId];
     [self.navigationController pushViewController:authorDetailController animated:YES];
@@ -264,8 +277,15 @@
 
 -(IBAction)shareImage:(id)sender
 {
-    UIImage *image = [self snapshot:self.contentView];
-    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+    [self likeWork:nil];
+    
+    UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"选择截图内容"
+                                                 message:nil
+                                                delegate:self
+                                       cancelButtonTitle:@"全部"
+                                       otherButtonTitles:@"No评析", nil];
+    av.tag = 1;
+    [av show];
 }
 
 - (void)didReceiveMemoryWarning
@@ -278,8 +298,11 @@
 #pragma mark - Private method
 - (UIImage *)snapshot:(UIView *)view
 {
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0);
-    [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    CGRect rt = [[UIScreen mainScreen] bounds];
+    rt.size.height = view.frame.size.height;
+    rt.origin = view.frame.origin;
+    UIGraphicsBeginImageContextWithOptions(rt.size, NO, 0.0);
+    [view drawViewHierarchyInRect:rt afterScreenUpdates:NO];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
@@ -296,10 +319,112 @@
     }
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"保存图片结果提示"
                                                     message:msg
-                                                   delegate:self
+                                                   delegate:nil
                                           cancelButtonTitle:@"确定"
                                           otherButtonTitles:nil];
+    alert.tag = 0;
     [alert show];
+}
+
+-(void)addAssetURL:(NSURL*)assetURL toAlbum:(NSString*)albumName withCompletionBlock:(SaveImageCompletion)completionBlock
+{
+    //相册存在标示
+    __block BOOL albumWasFound = NO;
+    
+    ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
+    //search all photo albums in the library
+    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop)
+     {
+         
+         //判断相册是否存在
+         if ([albumName compare: [group valueForProperty:ALAssetsGroupPropertyName]]==NSOrderedSame) {
+             
+             //存在
+             albumWasFound = YES;
+             
+             //get a hold of the photo's asset instance
+             [assetsLibrary assetForURL: assetURL
+                            resultBlock:^(ALAsset *asset) {
+                                
+                                //add photo to the target album
+                                [group addAsset: asset];
+                                
+                                //run the completion block
+                                completionBlock(nil);
+                                
+                            } failureBlock: completionBlock];
+             return;
+         }
+         
+         //如果不存在该相册创建
+         if (group==nil && albumWasFound==NO)
+         {
+             __weak ALAssetsLibrary* weakSelf = assetsLibrary;
+             
+             //创建相册
+             [assetsLibrary addAssetsGroupAlbumWithName:albumName resultBlock:^(ALAssetsGroup *group)
+              {
+                  
+                  //get the photo's instance
+                  [weakSelf assetForURL: assetURL
+                            resultBlock:^(ALAsset *asset)
+                   {
+                       
+                       //add photo to the newly created album
+                       [group addAsset: asset];
+                       
+                       //call the completion block
+                       completionBlock(nil);
+                       
+                   } failureBlock: completionBlock];
+                  
+              } failureBlock: completionBlock];
+             return;
+         }
+         
+     }failureBlock:completionBlock];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag != 1)
+    {
+        return;
+    }
+    UIImage *image = nil;
+    if (buttonIndex == 0)
+    {
+        image = [self snapshot:self.contentView];
+    }
+    else
+    {
+        image = [self snapshot:self.contentNoIntroView];
+    }
+    
+    
+    
+    __weak XCZWorkDetailViewController *weak_self = self;
+    ALAssetsLibrary *lib = [ALAssetsLibrary new];
+    [lib writeImageToSavedPhotosAlbum:image.CGImage
+                          orientation:(ALAssetOrientation)image.imageOrientation
+                      completionBlock:^(NSURL *assetURL, NSError *error)
+     {
+         [weak_self addAssetURL:assetURL toAlbum:@"诗词赋" withCompletionBlock:^(NSError *error)
+          {
+              NSString *msg = nil ;
+              if(error != NULL){
+                  msg = @"保存图片失败" ;
+              }else{
+                  msg = @"保存图片成功" ;
+              }
+              UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"保存图片结果提示"
+                                                              message:msg
+                                                             delegate:self
+                                                    cancelButtonTitle:@"确定"
+                                                    otherButtonTitles:nil];
+              [alert show];
+          }];
+     }];
 }
 
 @end

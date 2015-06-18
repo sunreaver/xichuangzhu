@@ -10,7 +10,6 @@
 #import <FMDB/FMDB.h>
 #import "XCZQuote.h"
 #import "XCZWorkDetailViewController.h"
-#import <AVOSCloud/AVOSCloud.h>
 
 @interface XCZQuotesViewController ()
 
@@ -79,7 +78,7 @@
 }
 
 - (IBAction)refreshQuotes:(id)sender {
-    [AVAnalytics event:@"refresh_random_works"]; // “换一换”事件。
+//    [AVAnalytics event:@"refresh_random_works"]; // “换一换”事件。
     [self loadQuotes];
     
     [UIView transitionWithView: self.tableView

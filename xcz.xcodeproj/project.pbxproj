@@ -122,7 +122,6 @@
 		05CC12FD196586890014989C /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				052E90FA1A558665000D9892 /* XCZLikesViewController.xib */,
 				05CC13181966FCFC0014989C /* AuthorHeaderView.xib */,
 				05CC130D1966689F0014989C /* XCZAuthorDetailsViewController.h */,
 				05CC130E1966689F0014989C /* XCZAuthorDetailsViewController.m */,
@@ -131,6 +130,7 @@
 				0573FF2119682050005341F2 /* XCZWorksViewController.xib */,
 				05BDB0BF1A5566FE00DBBFBF /* XCZLikesViewController.h */,
 				05BDB0C01A5566FE00DBBFBF /* XCZLikesViewController.m */,
+				052E90FA1A558665000D9892 /* XCZLikesViewController.xib */,
 				05CC12F3196569690014989C /* XCZAuthorsViewController.h */,
 				05CC12F4196569690014989C /* XCZAuthorsViewController.m */,
 				0573FF23196847A0005341F2 /* XCZAuthorsViewController.xib */,
@@ -422,7 +422,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcz/xcz-Prefix.pch";
 				INFOPLIST_FILE = "xcz/xcz-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/xcz",
@@ -446,7 +446,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcz/xcz-Prefix.pch";
 				INFOPLIST_FILE = "xcz/xcz-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/xcz",

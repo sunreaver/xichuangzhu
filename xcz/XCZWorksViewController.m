@@ -10,7 +10,7 @@
 #import "XCZWorkDetailViewController.h"
 #import <FMDB/FMDB.h>
 #import "XCZWork.h"
-#import <AVOSCloud/AVOSCloud.h>
+#import "IonIcons.h"
 
 @interface XCZWorksViewController ()
 
@@ -49,8 +49,12 @@
     }
         
     //添加“重排序”按钮
+    UIImage *refreshIcon = [IonIcons imageWithIcon:ion_refresh
+                                       iconColor:self.view.tintColor
+                                        iconSize:27.0f
+                                       imageSize:CGSizeMake(27.0f, 27.0f)];
     UIBarButtonItem *rightButton = [[UIBarButtonItem alloc]
-                                    initWithTitle:@"重排序"
+                                    initWithImage:refreshIcon
                                     style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(reorderWorks:)];
@@ -60,7 +64,7 @@
 }
 
 - (IBAction)reorderWorks:(id)sender {
-    [AVAnalytics event:@"reorder_works"]; // “重排序”事件。
+//    [AVAnalytics event:@"reorder_works"]; // “重排序”事件。
     self.works = [XCZWork reorderWorks];
     [UIView transitionWithView: self.tableView
                       duration: 0.15f
@@ -94,11 +98,11 @@
 
 // 以下3个message用于解决键盘位置占据了searchResultsTableView下方空间的bug
 // 参见：http://stackoverflow.com/questions/19069503/uisearchdisplaycontrollers-searchresultstableviews-contentsize-is-incorrect-b
-- (void)searchDisplayController:(UISearchDisplayController *)controller didHideSearchResultsTableView:(UITableView *)tableView {
+- (void)searchDisplayController:(UISearchController *)controller didHideSearchResultsTableView:(UITableView *)tableView {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
-- (void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView {
+- (void)searchDisplayController:(UISearchController *)controller willShowSearchResultsTableView:(UITableView *)tableView {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
 }
 
@@ -115,7 +119,7 @@
     self.searchResults = [self.works filteredArrayUsingPredicate:resultPredicate];
 }
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+- (BOOL)searchDisplayController:(UISearchController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
     [self filterContentForSearchText:searchString];
     return YES;

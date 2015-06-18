@@ -1,16 +1,11 @@
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '7.0'
+platform :ios, '8.0'
 
 target "xcz" do
 
 pod 'FMDB'
-pod 'AVOSCloud'
 pod 'HTCopyableLabel'
 pod 'ionicons'
-
-end
-
-target "xczTests" do
 
 end
 
