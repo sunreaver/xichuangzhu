@@ -22,7 +22,7 @@
     if ([db open]) {
         FMResultSet *s = [db executeQuery:@"SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1"];
         [s next];
-        quote.id = [s intForColumn:@"id"];
+        quote.iId = [s intForColumn:@"id"];
         quote.quote = [s stringForColumn:@"quote"];
         quote.authorId = [s intForColumn:@"author_id"];
         quote.author = [s stringForColumn:@"author"];
@@ -48,7 +48,7 @@
         FMResultSet *s = [db executeQuery:query];
         while ([s next]) {
             XCZQuote *quote = [[XCZQuote alloc] init];
-            quote.id = [s intForColumn:@"id"];
+            quote.iId = [s intForColumn:@"id"];
             quote.quote = [s stringForColumn:@"quote"];
             quote.authorId = [s intForColumn:@"author_id"];
             quote.author = [s stringForColumn:@"author"];

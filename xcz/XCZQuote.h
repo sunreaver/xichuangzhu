@@ -10,7 +10,7 @@
 
 @interface XCZQuote : NSObject
 
-@property (nonatomic) int id;
+@property (nonatomic) int iId;
 @property (nonatomic, strong) NSString *quote;
 @property (nonatomic) int authorId;
 @property (nonatomic, strong) NSString *author;
